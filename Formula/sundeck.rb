@@ -1,9 +1,9 @@
 class Sundeck < Formula
   desc "Converge isolated Daydream development environments"
   homepage "https://github.com/tomdai/homebrew-sundeck"
-  url "https://github.com/tomdai/homebrew-sundeck/releases/download/v0.7.1/sundeck-macos-arm64.tar.gz"
-  version "0.7.1"
-  sha256 "2e7d504c0a3247ccc9bb055c0156707b136c66fee8e2565e5156ec259907e6af"
+  url "https://github.com/tomdai/homebrew-sundeck/releases/download/v0.7.2/sundeck-macos-arm64.tar.gz"
+  version "0.7.2"
+  sha256 "91a3e86da539618f7d7210afa47e931e283c3b4bf1ba54fa0fca88e4f6474b40"
 
   depends_on arch: :arm64
   depends_on macos: :tahoe
