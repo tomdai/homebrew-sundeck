@@ -12,6 +12,19 @@ class Sundeck < Formula
     bin.install "sundeck"
   end
 
+  def caveats
+    <<~EOS
+      Upgrading from Sundeck 0.9.0 or earlier:
+        In configuration.development.json for Daydream.ClientApi,
+        Daydream.GrowthLeadAgent, and Daydream.McpModuleHost under
+        ~/.sundeck/workspace, rename frontendBaseUrl to frontendBaseUrls
+        and wrap its existing string value in an array.
+        Then run `sundeck up` in each affected Daydream worktree.
+
+      Migration details: https://github.com/tomdai/homebrew-sundeck/releases/tag/v0.9.1
+    EOS
+  end
+
   test do
     assert_equal version.to_s, shell_output("#{bin}/sundeck --version").strip
     assert_match "USAGE:", shell_output("#{bin}/sundeck --help")
