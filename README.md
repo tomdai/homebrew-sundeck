@@ -156,5 +156,3 @@ brew upgrade sundeck
 ```
 
 Each formula revision names an immutable GitHub release archive and verifies its SHA-256 before Homebrew installs the `sundeck` executable.
-
-Sundeck 0.9.1 follows Daydream's `frontendBaseUrls` configuration format. In each `configuration.development.json` under `~/.sundeck/workspace/Daydream.ClientApi`, `Daydream.GrowthLeadAgent`, and `Daydream.McpModuleHost`, rename `frontendBaseUrl` to `frontendBaseUrls` and wrap its existing string value in an array. Preserve the other fields and private file permissions. Then run `sundeck up` in each affected worktree to publish the updated configuration. Sundeck replaces this array with the worktree's single selected development origin.
