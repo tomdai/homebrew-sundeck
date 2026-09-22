@@ -14,21 +14,8 @@ class Sundeck < Formula
 
   def caveats
     <<~EOS
-      Upgrading from Sundeck 0.9.1 or earlier:
-        Add mcpOauth to the shared Daydream.ClientApi configuration in
-        ~/.sundeck/workspace and supply development signing/encryption
-        certificates. Preserve existing credentials; generate only missing ones.
-        Run `sundeck device inputs check`, then `sundeck up` in each affected
-        Daydream worktree. Restart alone does not republish shared inputs.
-
-      Upgrading from Sundeck 0.9.0 or earlier:
-        In configuration.development.json for Daydream.ClientApi,
-        Daydream.GrowthLeadAgent, and Daydream.McpModuleHost under
-        ~/.sundeck/workspace, rename frontendBaseUrl to frontendBaseUrls
-        and wrap its existing string value in an array.
-        Then run `sundeck up` in each affected Daydream worktree.
-
-      Agent-ready migration instructions:
+      An update to ~/.sundeck may be required.
+      Migration reference for your coding agent:
         https://github.com/tomdai/homebrew-sundeck/releases/tag/v0.9.2
     EOS
   end
