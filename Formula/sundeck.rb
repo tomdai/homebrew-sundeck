@@ -1,9 +1,9 @@
 class Sundeck < Formula
   desc "Converge isolated Daydream development environments"
   homepage "https://github.com/tomdai/homebrew-sundeck"
-  url "https://github.com/tomdai/homebrew-sundeck/releases/download/v0.10.0/sundeck-macos-arm64.tar.gz"
-  version "0.10.0"
-  sha256 "10cd41de9b31c52a8df7193eabc0bee73a1bebc66ee8ed460c326cad80ca99fe"
+  url "https://github.com/tomdai/homebrew-sundeck/releases/download/v0.10.1/sundeck-macos-arm64.tar.gz"
+  version "0.10.1"
+  sha256 "c78701239c10061b5193addb63de5c2d93dad38e0185f122a9a23d685f751303"
 
   depends_on arch: :arm64
   depends_on macos: :tahoe
@@ -16,7 +16,7 @@ class Sundeck < Formula
     <<~EOS
       An update to ~/.sundeck may be required.
       Release and migration notes:
-        https://github.com/tomdai/homebrew-sundeck/releases/tag/v0.10.0
+        https://github.com/tomdai/homebrew-sundeck/releases/tag/v0.10.1
     EOS
   end
 
