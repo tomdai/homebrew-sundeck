@@ -158,7 +158,7 @@ cd /absolute/path/to/Daydream
 sundeck up
 ```
 
-The first run can be slower because Sundeck provisions its native Ubuntu toolchain profile and prepares the complete environment. A successful run prints the Frontend, Client API, and MCP URLs.
+The first run can be slower because Sundeck prepares its Ubuntu toolchain template and the complete environment. Sundeck saves the prepared template under `~/Library/Application Support/Sundeck/machine-profiles/`, removes the temporary preparation machine, and imports the archive directly for new worktree machines. Deleting machines in OrbStack preserves the saved template; removing its host directory requires preparation again. A successful run prints the Frontend, Client API, and MCP URLs.
 
 Later `sundeck up` runs preserve a populated database. To replace its data with another saved snapshot, run these commands from that Daydream worktree while its machine is running:
 
