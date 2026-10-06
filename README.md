@@ -169,12 +169,15 @@ sundeck up
 
 Replacement discards local database changes after validating and migrating the snapshot in staging. It keeps your saved snapshots but no backup of the replaced database. Restore leaves applications stopped; `up` starts them again. To switch back, restore the other saved snapshot. Omit the snapshot name to restore the default.
 
-If you use Codex, install Sundeck's repository integration once and identify agent-started Frontend processes:
+If you use Codex, install Sundeck's repository integration from any Daydream checkout:
 
 ```sh
 sundeck codex install
-AI_AGENT=codex sundeck up
 ```
+
+This installs an ignored `AGENTS.override.md` in the primary checkout and all existing linked worktrees. Start a chat in your usual checkout; ask the agent to work in a worktree when you want isolation. The instructions explain how to reuse or create a worktree, install and verify its instructions before reading or changing its source, and run `AI_AGENT=codex sundeck up` there. New worktrees default to the repository's locally recorded `origin/HEAD` unless you specify another ref. Chats without a worktree request keep their selected checkout.
+
+Run `sundeck codex install` again after upgrading Sundeck, and use `sundeck codex status` to verify all existing checkouts. The integration does not require a Codex environment profile or project configuration block. It preserves tracked repository guidance and tells the agent to read it alongside Sundeck's environment instructions.
 
 Other AI agents can skip `sundeck codex install` and use their own short identifier in `AI_AGENT`.
 
