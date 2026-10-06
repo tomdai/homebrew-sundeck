@@ -188,17 +188,15 @@ Replace the checkout placeholder, then give this prompt to an agent with termina
 ```text
 Set up Sundeck for the existing Daydream checkout at <ABSOLUTE_PATH>.
 
-Install Sundeck with `brew install tomdai/sundeck/sundeck` if it is not already installed. Install OrbStack with `brew install --cask orbstack` if needed; no administrator DNS setup is required.
+Use the setup guide at https://github.com/tomdai/homebrew-sundeck#readme for installation, private inputs, snapshots, and startup. Include the required `machines.forward_ports false` setting; coordinate any required device-wide OrbStack restart with me.
 
-Build `~/.sundeck/workspace` from the real development configuration and secret files already in the Daydream checkout or supplied by my team. Preserve each required workspace file's relative path. Copy only secret files referenced by those configurations. Set `sundeck-shared.json` to {"formatVersion":5}. Use real copies, not symlinks. Apply mode 0700 to directories and 0600 to files.
+Use real development inputs already available or supplied by my team. Preserve existing private inputs, snapshots, their selected default, and populated machine databases. Keep secret contents private. If a snapshot must be pulled and I have not specified an organization, ask which one; do not choose all organizations automatically.
 
-Preserve existing database snapshots and their selected default. If no snapshot is available, copy a complete team-supplied snapshot, or use `sundeck database pull` for the organization I specify after Google Cloud authentication and read access are available. Ask which organization to pull if I have not specified one; do not choose --all automatically. Use `sundeck database snapshots` and `sundeck database default <name>` to select a default when needed. Pulling and selecting a default do not replace a running machine's database.
+Tailscale is optional; use ordinary `.orb.local` development unless I request Tailscale.
 
-Treat Tailscale as optional. Do not block setup if `tailscale/connection.secret.json` or its values are absent; omit the directory or leave it empty and continue with `.orb.local` development. Configure Tailscale only if complete existing values are available and I explicitly ask to use it.
+If you are Codex, refresh and verify the repository integration with `sundeck codex install` and `sundeck codex status`. Other agents skip that integration. Use your own short identifier in `AI_AGENT` when starting the environment.
 
-Do not print secret contents, use example configurations, invent or rotate credentials, construct a database manifest, replace an existing `~/.sundeck` wholesale, or commit private files. Do not replace a populated machine database unless I ask for it. If required configuration or secrets are missing or ambiguous, report the exact expected path or field so I can obtain the correct input from my team.
-
-Run `sundeck device inputs check`. Only after it passes, run `sundeck codex install` and `AI_AGENT=codex sundeck up` from the Daydream checkout. Report the validation result and the URLs printed by the successful run.
+Continue setup and supported recovery until private-input validation passes and Daydream starts successfully. Report the validation result and the actual published URLs. If progress needs missing inputs or an unauthorized operation, explain the concrete blocker and continue independent authorized work.
 ```
 
 ## Upgrade Sundeck
