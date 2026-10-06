@@ -4,9 +4,9 @@ This repository contains signed and notarized Apple Silicon releases of Sundeck 
 
 ## What you need
 
-- An Apple Silicon Mac running macOS 26 or newer
+- An Apple Silicon Mac running macOS 15 or newer
 - Homebrew
-- [Apple Container](https://github.com/apple/container)
+- [OrbStack](https://orbstack.dev)
 - A Daydream checkout and the team's development configuration and secret files
 - A prepared development database snapshot, or the team's production read access to create one with `sundeck database pull`
 
@@ -20,19 +20,23 @@ Install Sundeck from its public Homebrew tap:
 brew install tomdai/sundeck/sundeck
 ```
 
-Check that Apple Container's local DNS domains include `machine`:
+Install OrbStack once:
 
 ```sh
-container system dns list
+brew install --cask orbstack
 ```
 
-If `machine` is absent, add it once with administrator privileges:
+Sundeck uses named machine endpoints. Disable OrbStack's automatic localhost/LAN machine port forwarding once so it cannot bypass worktree domain controls or collide with the device OAuth relay:
 
 ```sh
-sudo container system dns create machine
+orb config set machines.forward_ports false
 ```
 
-Apple Container does not need to be running yet. Sundeck starts it when needed.
+If OrbStack is already running, stop and restart its shared runtime to apply this setting; coordinate that restart with other workloads. This is a device-wide Linux-machine setting. Other OrbStack machines must also use their named addresses; OrbStack's global Docker port forwarding is unaffected. Sundeck checks this setting before managed guest mutations and never changes it implicitly.
+
+OrbStack provides `.orb.local` DNS and host file sharing automatically. Its GUI does not need to remain open; Sundeck uses its background runtime. Each worktree has a native Linux machine with dynamic memory, independent services, and its own database volumes.
+
+OrbStack does not need to be running yet. Sundeck starts it when needed.
 
 ## 2. Prepare `~/.sundeck`
 
@@ -78,7 +82,7 @@ The root `sundeck-shared.json` file must contain exactly:
 
 Leave `database/` ready for the snapshot selected in the next step. Preserve any snapshots and default selection already there.
 
-You may omit the entire `tailscale/` directory or leave it empty. Normal `.machine` development does not require Tailscale credentials.
+You may omit the entire `tailscale/` directory or leave it empty. Normal `.orb.local` development does not require Tailscale credentials.
 
 All directories beneath `~/.sundeck` must be owned by your logged-in user with mode `0700`. All files must be real, single-link files owned by your user with mode `0600`; symlinks are not accepted. If `~/.sundeck` already exists, inspect and preserve it rather than replacing it wholesale.
 
@@ -103,16 +107,16 @@ Choose an organization UUID from the list and replace `<organization-uuid>` belo
 sundeck database pull --organization <organization-uuid> --name customer
 ```
 
-`pull` saves a new snapshot without changing a VM or production. Repeat `--organization` to select several organizations, or use `--all` to include every organization. Omit `--name` for an automatic timestamp name. Large organizations can take time and disk space; AI usage and billing rows are excluded. Imported integrations are disconnected and existing agent invocations are retired. Snapshots retain private business content and belong in `~/.sundeck`, never in Git.
+`pull` saves a new snapshot without changing a machine or production. Repeat `--organization` to select several organizations, or use `--all` to include every organization. Omit `--name` for an automatic timestamp name. Large organizations can take time and disk space; AI usage and billing rows are excluded. Imported integrations are disconnected and existing agent invocations are retired. Snapshots retain private business content and belong in `~/.sundeck`, never in Git.
 
-List saved snapshots and choose the one new VMs should use:
+List saved snapshots and choose the one new machines should use:
 
 ```sh
 sundeck database snapshots
 sundeck database default customer
 ```
 
-For a copied snapshot, use its existing name instead of `customer`. A single saved snapshot is selected automatically; with several snapshots, the list marks the default with `*`. New pulls preserve an existing default; changing the default does not change any VM. No VM needs to be running for these commands. First startup restores the default into an absent or empty database.
+For a copied snapshot, use its existing name instead of `customer`. A single saved snapshot is selected automatically; with several snapshots, the list marks the default with `*`. New pulls preserve an existing default; changing the default does not change any machine. No machine needs to be running for these commands. First startup restores the default into an absent or empty database.
 
 If a pull says Sundeck needs an update because production's schema changed, upgrade Sundeck and retry. If the latest release still reports it, share the table or column names with the Sundeck maintainer; do not bypass the check.
 
@@ -131,7 +135,7 @@ Only create `tailscale/connection.secret.json` if you intend to use Tailscale HT
 
 Replace every placeholder with its real existing value. Do not invent or rotate credentials during setup.
 
-If you omit this file, `sundeck up` continues to use the default `.machine` HTTP URLs. `sundeck tailscale enable` and `sundeck device oauth-relay enable` will explain that the optional configuration is required for those features.
+If you omit this file, `sundeck up` continues to use the default `.orb.local` HTTP URLs. `sundeck tailscale enable` and `sundeck device oauth-relay enable` will explain that the optional configuration is required for those features.
 
 ## 5. Validate the private inputs
 
@@ -141,7 +145,7 @@ Run:
 sundeck device inputs check
 ```
 
-This checks the layout, ownership, permissions, JSON, referenced secrets, configuration compatibility, and all file checksums in the default snapshot. It does not start Apple Container or modify a Daydream checkout.
+This checks the layout, ownership, permissions, JSON, referenced secrets, configuration compatibility, and all file checksums in the default snapshot. It does not start OrbStack or modify a Daydream checkout.
 
 Resolve any reported missing or ambiguous input using the existing Daydream material. Do not substitute an example value just to make validation pass.
 
@@ -154,9 +158,9 @@ cd /absolute/path/to/Daydream
 sundeck up
 ```
 
-The first run can be slower because Apple Container may install its recommended VM kernel and Sundeck must prepare the complete environment. A successful run prints the Frontend, Client API, and MCP URLs.
+The first run can be slower because Sundeck provisions its native Ubuntu toolchain profile and prepares the complete environment. A successful run prints the Frontend, Client API, and MCP URLs.
 
-Later `sundeck up` runs preserve a populated database. To replace its data with another saved snapshot, run these commands from that Daydream worktree while its VM is running:
+Later `sundeck up` runs preserve a populated database. To replace its data with another saved snapshot, run these commands from that Daydream worktree while its machine is running:
 
 ```sh
 sundeck database restore customer --replace
@@ -181,15 +185,15 @@ Replace the checkout placeholder, then give this prompt to an agent with termina
 ```text
 Set up Sundeck for the existing Daydream checkout at <ABSOLUTE_PATH>.
 
-Install Sundeck with `brew install tomdai/sundeck/sundeck` if it is not already installed. Verify that Apple Container is installed and that `container system dns list` includes `machine`; if adding that DNS domain requires administrator approval, ask me.
+Install Sundeck with `brew install tomdai/sundeck/sundeck` if it is not already installed. Install OrbStack with `brew install --cask orbstack` if needed; no administrator DNS setup is required.
 
 Build `~/.sundeck/workspace` from the real development configuration and secret files already in the Daydream checkout or supplied by my team. Preserve each required workspace file's relative path. Copy only secret files referenced by those configurations. Set `sundeck-shared.json` to {"formatVersion":5}. Use real copies, not symlinks. Apply mode 0700 to directories and 0600 to files.
 
-Preserve existing database snapshots and their selected default. If no snapshot is available, copy a complete team-supplied snapshot, or use `sundeck database pull` for the organization I specify after Google Cloud authentication and read access are available. Ask which organization to pull if I have not specified one; do not choose --all automatically. Use `sundeck database snapshots` and `sundeck database default <name>` to select a default when needed. Pulling and selecting a default do not replace a running VM's database.
+Preserve existing database snapshots and their selected default. If no snapshot is available, copy a complete team-supplied snapshot, or use `sundeck database pull` for the organization I specify after Google Cloud authentication and read access are available. Ask which organization to pull if I have not specified one; do not choose --all automatically. Use `sundeck database snapshots` and `sundeck database default <name>` to select a default when needed. Pulling and selecting a default do not replace a running machine's database.
 
-Treat Tailscale as optional. Do not block setup if `tailscale/connection.secret.json` or its values are absent; omit the directory or leave it empty and continue with `.machine` development. Configure Tailscale only if complete existing values are available and I explicitly ask to use it.
+Treat Tailscale as optional. Do not block setup if `tailscale/connection.secret.json` or its values are absent; omit the directory or leave it empty and continue with `.orb.local` development. Configure Tailscale only if complete existing values are available and I explicitly ask to use it.
 
-Do not print secret contents, use example configurations, invent or rotate credentials, construct a database manifest, replace an existing `~/.sundeck` wholesale, or commit private files. Do not replace a populated VM database unless I ask for it. If required configuration or secrets are missing or ambiguous, report the exact expected path or field so I can obtain the correct input from my team.
+Do not print secret contents, use example configurations, invent or rotate credentials, construct a database manifest, replace an existing `~/.sundeck` wholesale, or commit private files. Do not replace a populated machine database unless I ask for it. If required configuration or secrets are missing or ambiguous, report the exact expected path or field so I can obtain the correct input from my team.
 
 Run `sundeck device inputs check`. Only after it passes, run `sundeck codex install` and `AI_AGENT=codex sundeck up` from the Daydream checkout. Report the validation result and the URLs printed by the successful run.
 ```
