@@ -88,7 +88,7 @@ All directories beneath `~/.sundeck` must be owned by your logged-in user with m
 
 ## 3. Choose a database snapshot
 
-If your team supplied a development snapshot, copy its complete directory into `~/.sundeck/database/`, keeping its original directory name and every file. Existing snapshots with `database.pgdump` and `manifest.json` remain supported. New Sunbeam snapshots contain a manifest, schema SQL and compressed table files. Do not construct or edit a manifest, or convert either format by hand.
+If your team supplied a development snapshot, copy its complete directory into `~/.sundeck/database/`, keeping its original directory name and every file. New Sunbeam snapshots contain `database.pgdump`, a standard PostgreSQL custom archive compatible with `pg_restore` and TablePlus's PostgreSQL restore, plus `manifest.json` for Sundeck's validation and organization metadata. Earlier snapshots, including those with schema SQL and compressed table files, remain supported. Do not construct or edit a manifest, or convert a snapshot by hand.
 
 To create a snapshot from production instead, install the optional host tools and authenticate:
 
@@ -100,6 +100,8 @@ sundeck database organizations
 ```
 
 Your Google account needs the team's existing Cloud SQL and database read access. Authentication alone does not grant it; ask your team for access or a prepared snapshot if the connection is refused. Sundeck starts and stops Cloud SQL Proxy for each pull, so there is no proxy process to manage yourself.
+
+Saving a snapshot also needs OrbStack and its Docker CLI. Sundeck starts OrbStack if necessary, then packages only sanitized data in a network-disabled container named `sundeck-temporary-snapshot-archive-<uuid>`, using its pinned PostgreSQL/pgvector image. It prints the name and removes the container and its temporary database volume afterwards. No worktree machine is needed. Organization listing and `pull --dry-run` do not start OrbStack. To restore `database.pgdump` directly with another tool, use an empty compatible PostgreSQL database with pgvector available; Daydream migrations and Sundeck's local-user setup are separate from that restore.
 
 Choose an organization UUID from the list and replace `<organization-uuid>` below:
 
